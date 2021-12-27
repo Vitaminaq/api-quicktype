@@ -1,0 +1,33 @@
+{
+  "name": "yapi-quicktype",
+  "version": "1.0.0",
+  "description": "yapi",
+  "bin": {
+    "nxxt": "bin/yapi-quicktype.js"
+  },
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node ./index.ts --files",
+    "info": "ts-node --show-config"
+  },
+  "keywords": [
+    "yapi",
+    "typescript"
+  ],
+  "author": "Vitaminaq",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "fs-extra": "^10.0.0",
+    "inquirer": "^8.2.0",
+    "jiti": "^1.12.9",
+    "lodash": "^4.17.21",
+    "quicktype-core": "^6.0.70",
+    "ts-node": "^10.4.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.13"
+  }
+}
