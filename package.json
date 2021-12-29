@@ -7,7 +7,7 @@
   },
   "main": "index.ts",
   "scripts": {
-    "start": "jiti ./index.ts --files"
+    "start": "jiti ./index"
   },
   "keywords": [
     "yapi",
@@ -17,10 +17,12 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.24.0",
+    "chalk": "^5.0.0",
     "fs-extra": "^10.0.0",
     "inquirer": "^8.2.0",
     "jiti": "^1.12.9",
     "lodash": "^4.17.21",
+    "prettier": "^2.5.1",
     "quicktype-core": "^6.0.70",
     "typescript": "^4.5.4"
   },

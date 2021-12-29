@@ -3,3 +3,5 @@ dist
 .DS_Store
 .vscode
 bin
+types
+yapi-quicktype.config.ts

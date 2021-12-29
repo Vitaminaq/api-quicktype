@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
+import chalk from 'chalk';
 
 export default class BaseAxios {
     public axios: AxiosInstance;
@@ -27,18 +28,18 @@ export default class BaseAxios {
 		this.axios.interceptors.response.use(
 			(response: AxiosResponse) => {
 				const { data, headers } = response;
-				const { errcode } = data; // errmsg
+				const { errcode, errmsg } = data;
                 const cookie = headers['set-cookie'];
                 if (cookie) {
                     global.cookie = cookie;
                 }
-                // console.log(errcode, errmsg);
-                if (errcode !== 0) return process.exit(1);
+                if (errcode !== 0)
+				    console.log(chalk.red('[request error]'), errcode, errmsg);
 				return data.data;
 			},
 			(error) => {
-				console.log('error：', error.code);
-				return process.exit(1);
+				console.log(chalk.red('[request error]'), error.request._options.path, error.code);
+				return null;
 			}
 		);
 	}

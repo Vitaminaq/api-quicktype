@@ -13,10 +13,12 @@ interface Config {
     email: string;
     password: string;
     baseURL: string;
+    limit: number;
+    all: boolean;
 }
 const requiredField: (keyof Config)[] = ['email', 'password', 'baseURL'];
 
-export const inputConfig = async (config: Config) => {
+export const inputConfig = async (config: Partial<Config>) => {
     const list: any[] = [];
 
     requiredField.forEach(k => {
@@ -34,16 +36,29 @@ export const inputConfig = async (config: Config) => {
 }
 
 export const mergeConfig = async () => {
-    let config = null;
+    const config = {
+        email: '',
+        password: '',
+        baseURL: '',
+        limit: 1000,
+        all: true
+    };
+    let userConfig = {};
     try {
-        config = jiti(path.resolve(cwd))('./yapi-quicktype.config').default;
+        userConfig = jiti(path.resolve(cwd))('./yapi-quicktype.config').default;
     } catch (e) {
-        config = await inputConfig(config);
+        userConfig = await inputConfig(config);
     }
+    Object.assign(config, userConfig);
     Object.assign(config, await inputConfig(config));
     return config;
 };
 
+export const getNames = (path: string) => {
+    const n = path.split('?')[0].replace('//', '').split('/');
+    n.shift();
+    return n.map((m: string) => m.replace(/\{/g, '').replace(/\}/g, ''));
+}
 
 export const doCamel = (name: string) => {
     return name.split('').reduce((p: string, c: string, i: number) => {
