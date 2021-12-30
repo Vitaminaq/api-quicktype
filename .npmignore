@@ -1,0 +1,15 @@
+*_cache
+
+coverage
+
+node_modules
+
+test
+
+package-lock.json
+
+yarn.lock
+
+yapi-quicktype.config.ts
+
+types

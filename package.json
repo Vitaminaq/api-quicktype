@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "yapi",
   "bin": {
-    "nxxt": "bin/yapi-quicktype.js"
+    "yapi-quicktype": "bin/yapi-quicktype.js"
   },
   "main": "index.ts",
   "scripts": {
