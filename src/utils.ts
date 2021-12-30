@@ -73,7 +73,6 @@ export const doCamel = (name: string) => {
 
 export const clean = () => fse.emptyDirSync(typePath);
 export const createTypesFolder = () => fse.ensureDirSync(typePath);
-export const createTypeFile = (name: string) => fse.ensureDirSync(typePath);
 
 export class TypeFile {
     public filePath: string = '';
