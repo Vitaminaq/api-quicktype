@@ -1,6 +1,7 @@
 import prettier from 'prettier';
 import chalk from 'chalk';
 import { createTypesFolder, TypeFile } from './utils';
+import cliProgress from 'cli-progress';
 
 interface Task {
    run: () => Promise<any>;
@@ -15,9 +16,19 @@ export class RequestQueue {
    public taskQueue: any[] = [];
    public targetQueue: any[] = [];
    public writeQueue: WriteQueue;
+   public total: number = 0;
+   public progress: any;
 
-   public constructor(writeQueue: WriteQueue) {
+   public constructor(writeQueue: WriteQueue, limit: number) {
+      if (limit) {
+         this.taskLimit = limit;
+      }
       this.writeQueue = writeQueue;
+      this.progress = new cliProgress.SingleBar(
+         {}, 
+         cliProgress.Presets.shades_classic
+      );
+      this.progress.start(0, 0);
    }
 
    public get taskQueueLen() {
@@ -30,10 +41,12 @@ export class RequestQueue {
       return this.targetQueue.length;
    }
 
-   public push(task: Task) {
+   public push(task: Task, add: boolean = true) {
+      add && this.progress.setTotal(++this.total);
       if (!this.isLimit) {
          this.taskQueue.push(task);
          return task.run().then(() => {
+            this.progress.increment();
             this.pop();
          });
       }
@@ -44,9 +57,10 @@ export class RequestQueue {
       this.taskQueue.pop();
 
       if (this.targetQueueLen)
-         return this.push(this.targetQueue.shift());
+         return this.push(this.targetQueue.shift(), false);
 
       if (!this.taskQueueLen && !this.targetQueueLen) {
+         this.progress.stop();
          this.writeQueue.run();
       }
    }
@@ -89,7 +103,7 @@ export class WriteQueue {
          try {
             content = prettier.format(file.read() + content, { semi: true, tabWidth: 4, parser: "typescript" });
             console.log(chalk.green('[success]'), filePath);
-         } catch(e) {
+         } catch (e) {
             console.log(chalk.yellow('[prettier fail]'), filePath);
          }
          file.write(content);

@@ -22,7 +22,7 @@ export const createParamsInterface = async (params: Param[], path: string) => {
     try {
         const { lines } = await quicktypeJSON('typescript', 'Params', JSON.stringify(p));
         return lines.join("\n");
-    } catch(e) {
+    } catch (e) {
         console.log(chalk.red('[quicktype fail：params]'), path);
         return '';
     }

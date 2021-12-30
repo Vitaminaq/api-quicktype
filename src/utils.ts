@@ -14,6 +14,7 @@ interface Config {
     password: string;
     baseURL: string;
     limit: number;
+    taskLimit: number;
     all: boolean;
 }
 const requiredField: (keyof Config)[] = ['email', 'password', 'baseURL'];
@@ -41,6 +42,7 @@ export const mergeConfig = async () => {
         password: '',
         baseURL: '',
         limit: 1000,
+        taskLimit: 6,
         all: true
     };
     let userConfig = {};
@@ -77,8 +79,8 @@ export class TypeFile {
     public filePath: string = '';
 
     public constructor(fileName: string) {
-       this.filePath = getTypeModulePath(fileName);
-       fse.ensureFileSync(this.filePath);
+        this.filePath = getTypeModulePath(fileName);
+        fse.ensureFileSync(this.filePath);
     }
 
     public read() {
