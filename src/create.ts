@@ -40,6 +40,13 @@ export const createResponseInterface = async (resStr: string, path: string) => {
     }
 }
 
+interface NamespaceItem {
+    name: string;
+    method: string;
+}
+
+const namespaceList: NamespaceItem[] = [];
+
 export const create = async (inter: any, writeQueue: WriteQueue) => {
     if (!inter) return;
     const { path, res_body, method, req_query, req_body_form } = inter;
@@ -47,7 +54,7 @@ export const create = async (inter: any, writeQueue: WriteQueue) => {
     const names: string[] = getNames(path);
     if (!names.length || !names[0]) return;
 
-    const nameSpace = names.filter(i => i).map((i: string) => doCamel(i)).reduce((p: string, c: string) => {
+    let nameSpace = names.filter(i => i).map((i: string) => doCamel(i)).reduce((p: string, c: string) => {
         const pn = isNaN(Number(p));
         const cn = isNaN(Number(c));
         if (!pn && cn) return `T${p}.${c}`;
@@ -57,9 +64,19 @@ export const create = async (inter: any, writeQueue: WriteQueue) => {
     });
 
     if (!nameSpace) return;
+    const filter = namespaceList.filter(i => i.name === nameSpace)[0];
+    if (filter) {
+        if (filter.method === method) return;
+        nameSpace = `${nameSpace}.${method}`;
+    }
+    namespaceList.push({
+        name: nameSpace,
+        method
+    });
+
     const content = `
     // ${path} - ${method}
-    declare namespace ${nameSpace}.${method} {
+    declare namespace ${nameSpace} {
         ${await createParamsInterface(method.toLowerCase() === 'get' ? req_query : req_body_form, path)}
         ${await createResponseInterface(res_body, path)}
     }`;

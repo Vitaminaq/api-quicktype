@@ -1,6 +1,6 @@
 {
   "name": "yapi-quicktype",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "yapi",
   "bin": {
     "yapi-quicktype": "bin/yapi-quicktype.js"
