@@ -61,6 +61,7 @@ export const getNames = (path: string) => {
 }
 
 export const doCamel = (name: string) => {
+    if (!name) return '';
     return name.split('').reduce((p: string, c: string, i: number) => {
         if (i === 1) return p.toUpperCase() + c;
         if (p.indexOf('-') !== -1 || p.indexOf('_') !== -1) return p.replace('-', '').replace('_', '') + c.toUpperCase();

@@ -1,6 +1,6 @@
-import prettier from 'prettier';
 import { quicktypeJSONSchema, quicktypeJSON } from './quicktype';
-import { doCamel, createTypesFolder, TypeFile, getNames } from './utils';
+import { doCamel, getNames } from './utils';
+import { WriteQueue } from './queue';
 import chalk from 'chalk';
 
 interface Param {
@@ -40,17 +40,14 @@ export const createResponseInterface = async (resStr: string, path: string) => {
     }
 }
 
-export const create = async (inter: any) => {
-    createTypesFolder();
+export const create = async (inter: any, writeQueue: WriteQueue) => {
     if (!inter) return;
     const { path, res_body, method, req_query, req_body_form } = inter;
     if (!path) return;
-    const names = getNames(path);
+    const names: string[] = getNames(path);
     if (!names.length || !names[0]) return;
-    
-    const typeFile = new TypeFile(names[0]);
-    let content = typeFile.read();
-    const nameSpace = names.map((i: string) => doCamel(i)).reduce((p: string, c: string) => {
+
+    const nameSpace = names.filter(i => i).map((i: string) => doCamel(i)).reduce((p: string, c: string) => {
         const pn = isNaN(Number(p));
         const cn = isNaN(Number(c));
         if (!pn && cn) return `T${p}.${c}`;
@@ -60,19 +57,15 @@ export const create = async (inter: any) => {
     });
 
     if (!nameSpace) return;
-    content = `${content}
+    const content = `
     // ${path} - ${method}
     declare namespace ${nameSpace}.${method} {
         ${await createParamsInterface(method.toLowerCase() === 'get' ? req_query : req_body_form, path)}
         ${await createResponseInterface(res_body, path)}
     }`;
 
-    try {
-        content = prettier.format(content, { semi: true, tabWidth: 4, parser: "typescript" });
-        console.log(chalk.green('[success]'), path);
-        typeFile.write(content);
-    } catch(e) {
-        typeFile.write(content);
-        console.log(chalk.yellow('[prettier fail]'), path);
-    }
+    writeQueue.push({
+        fileName: names[0],
+        content
+    })
 };

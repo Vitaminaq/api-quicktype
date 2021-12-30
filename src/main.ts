@@ -1,7 +1,7 @@
 import Api from './api';
 import { create } from './create';
 import { clean, mergeConfig } from './utils';
-import { RequestQueue } from './queue';
+import { RequestQueue, WriteQueue } from './queue';
 
 export default async () => {
     const { email, password, baseURL } = await mergeConfig();
@@ -16,7 +16,8 @@ export default async () => {
     if (!groups || !groups.length) return;
     clean();
 
-    const requestQueue = new RequestQueue();
+    const writeQueue = new WriteQueue();
+    const requestQueue = new RequestQueue(writeQueue);
 
     groups.forEach(async (group: any) => {
         requestQueue.push({
@@ -40,7 +41,7 @@ export default async () => {
                             interfaces.forEach(async (interF: any) => {
                                 if (interF.status !== 'done') return;
                                 requestQueue.push({
-                                    run: async() => create(await api.getInterface({ id: interF._id }))
+                                    run: async() => create(await api.getInterface({ id: interF._id }), writeQueue)
                                 });
                             });
                         }
