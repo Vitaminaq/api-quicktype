@@ -15,6 +15,8 @@
   ],
   "author": "Vitaminaq",
   "license": "MIT",
+  "homepage": "https://github.com/Vitaminaq/yapi-quicktype",
+  "bugs": "https://github.com/Vitaminaq/yapi-quicktype/issues",
   "dependencies": {
     "axios": "^0.24.0",
     "chalk": "^5.0.0",
