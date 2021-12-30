@@ -9,7 +9,13 @@ npm/cnpm install yapi-quicktype --save / yarn add yapi-quicktype
 ```
 
 #### 使用/Use
-create yapi yapi-quicktype.config.js(or ts) In your project root directory or cmd input  
+create yapi yapi-quicktype.config.js(or ts) In your project root directory or cmd input
+``` bash
+// package.json
+ "scripts": {
+    "type": "yapi-quicktype"
+ }
+```
 ##### 参数配置/ params
 | key  | require |  default |  type | discribe |  
 | :--: | :-----: | :----: | :---: | -------- |  
