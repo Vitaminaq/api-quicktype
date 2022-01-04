@@ -15,13 +15,18 @@ export const createParamsInterface = async (params: Param[], path: string) => {
     if (!params || !params.length) return '';
     const p: Record<string, any> = {};
     params.forEach(i => {
-        if (!i.name) return '';
-        p[i.name] = p[i.example] || '';
+        let k = i.name;
+        const ks = Object.keys(p);
+        if (!k || ks.includes(k) || ks.includes(`${k}__optional__`)) return;
+        if (!Number(i.required)) {
+            k = `${k}__optional__`;
+        }
+        p[k] = p[i.example] || '';
     });
     if (!Object.keys(p).length) return '';
     try {
         const { lines } = await quicktypeJSON('typescript', 'Params', JSON.stringify(p));
-        return lines.join("\n");
+        return lines.join("\n").replace(/__optional__/g, '?');
     } catch (e) {
         console.log(chalk.red('[quicktype fail：params]'), path);
         return '';
