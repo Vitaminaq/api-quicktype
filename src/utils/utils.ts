@@ -38,23 +38,37 @@ export const inputConfig = async (config: Partial<Config>) => {
 
 export const mergeConfig = async () => {
     const config = {
+        platform: 'yapi',
         email: '',
         password: '',
         baseURL: '',
+        url: '',
         limit: 1000,
         taskLimit: 6,
         all: true
     };
     let userConfig = {};
     try {
-        userConfig = jiti(path.resolve(cwd))('./yapi-quicktype.config').default;
+        userConfig = jiti(path.resolve(cwd))('./quicktype.config').default;
     } catch (e) {
-        userConfig = await inputConfig(config);
+        // userConfig = await inputConfig(config);
     }
     Object.assign(config, userConfig);
-    Object.assign(config, await inputConfig(config));
+    // Object.assign(config, await inputConfig(config));
     return config;
 };
+
+
+export const createConfig = () => {
+    let config: any;
+    return async () => {
+        if (config) return config;
+        config = await mergeConfig();
+        return config;
+    }
+}
+
+export const getConfig = createConfig();
 
 export const getNames = (path: string) => {
     const n = path.split('?')[0].replace('//', '').split('/');
@@ -65,7 +79,10 @@ export const getNames = (path: string) => {
 export const doCamel = (name: string) => {
     if (!name) return '';
     return name.split('').reduce((p: string, c: string, i: number) => {
-        if (i === 1) return p.toUpperCase() + c;
+        if (i === 1) {
+            const cn = isNaN(Number(p));
+            return (cn ? p.toUpperCase() : `T${p}`) + c;
+        }
         if (p.indexOf('-') !== -1 || p.indexOf('_') !== -1) return p.replace('-', '').replace('_', '') + c.toUpperCase();
         return p + c;
     });
@@ -90,3 +107,45 @@ export class TypeFile {
         return fse.writeFileSync(this.filePath, content);
     }
 }
+
+interface NamespaceItem {
+    name: string;
+    method: string;
+}
+
+interface NamespaceReturn {
+    nameSpace: string;
+    fileName: string;
+}
+
+// 防止重复
+export const namespace = () => {
+    const namespaceList: NamespaceItem[] = [];
+    return (path: string, method: string): NamespaceReturn | void => {
+        const names: string[] = getNames(path);
+        if (!names.length || !names[0]) return;
+
+        let nameSpace = names.filter(i => i).map((i: string) => doCamel(i)).reduce((p: string, c: string) => {
+            const cn = isNaN(Number(c));
+            if (!cn) return `${p}.T${c}`;
+            return `${p}.${c}`;
+        }, '').replace('.', '');
+
+        if (!nameSpace) return;
+        const filter = namespaceList.filter(i => i.name === nameSpace)[0];
+        if (filter) {
+            if (filter.method === method) return;
+            nameSpace = `${nameSpace}.${doCamel(method)}`;
+        }
+        namespaceList.push({
+            name: nameSpace,
+            method
+        });
+        return {
+            nameSpace,
+            fileName: names[0]
+        };
+    }
+}
+
+export const getNamespace = namespace();

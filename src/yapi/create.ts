@@ -1,6 +1,6 @@
-import { quicktypeJSONSchema, quicktypeJSON } from './quicktype';
-import { doCamel, getNames } from './utils';
-import { WriteQueue } from './queue';
+import { quicktypeJSONSchema, quicktypeJSON } from '../utils/quicktype';
+import { getNamespace } from '../utils/utils';
+import { WriteQueue } from '../utils/queue';
 import chalk from 'chalk';
 
 interface Param {
@@ -45,39 +45,14 @@ export const createResponseInterface = async (resStr: string, path: string) => {
     }
 }
 
-interface NamespaceItem {
-    name: string;
-    method: string;
-}
-
-const namespaceList: NamespaceItem[] = [];
-
 export const create = async (inter: any, writeQueue: WriteQueue) => {
     if (!inter) return;
     const { path, res_body, method, req_query, req_body_form } = inter;
     if (!path) return;
-    const names: string[] = getNames(path);
-    if (!names.length || !names[0]) return;
+    const res = getNamespace(path, method);
+    if (!res) return;
 
-    let nameSpace = names.filter(i => i).map((i: string) => doCamel(i)).reduce((p: string, c: string) => {
-        const pn = isNaN(Number(p));
-        const cn = isNaN(Number(c));
-        if (!pn && cn) return `T${p}.${c}`;
-        if (!pn && !cn) return `T${p}.T${c}`;
-        if (pn && !cn) return `${p}${c}`;
-        return `${p}.${c}`;
-    });
-
-    if (!nameSpace) return;
-    const filter = namespaceList.filter(i => i.name === nameSpace)[0];
-    if (filter) {
-        if (filter.method === method) return;
-        nameSpace = `${nameSpace}.${method}`;
-    }
-    namespaceList.push({
-        name: nameSpace,
-        method
-    });
+    const { nameSpace, fileName } = res;
 
     const content = `
     // ${path} - ${method}
@@ -87,7 +62,7 @@ export const create = async (inter: any, writeQueue: WriteQueue) => {
     }`;
 
     writeQueue.push({
-        fileName: names[0],
+        fileName,
         content
-    })
+    });
 };
