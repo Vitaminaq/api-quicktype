@@ -24,15 +24,17 @@ export const swagger = async () => {
 
                 const res = getNamespace(basePath + k, k1);
                 if (!res) return;
-                const { nameSpace, fileName } = res;
+                const { nameSpace } = res;
 
-                console.log(nameSpace, fileName);
+                console.log(nameSpace);
+
+                const { allPropertiesRequired } = await getConfig();
 
                 const content = `
                 // ${path}
                 declare namespace ${nameSpace} {
                     ${parameInterface}
-                    ${resInterface}
+                    ${allPropertiesRequired ? resInterface.replace(/\?/g, '') : resInterface}
                 }`;
 
                 writeQueue.push({

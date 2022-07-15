@@ -30,7 +30,7 @@ export const quicktypeJSONSchema = async (targetLanguage: string, typeName: stri
 
     return quicktype({
         inputData,
-        lang: targetLanguage,
+        lang: targetLanguage
     });
 }
 

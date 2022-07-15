@@ -73,19 +73,22 @@ export const getConfig = createConfig();
 export const getNames = (path: string) => {
     const n = path.split('?')[0].replace('//', '').split('/');
     n.shift();
-    return n.map((m: string) => m.replace(/\{/g, '').replace(/\}/g, ''));
+    return n.map((m: string) => m.replace(/(\{|\})/g, ''));
 }
+
+const filterCharcher = [';', ':', '?', '{', '}', '[', ']'];
 
 export const doCamel = (name: string) => {
     if (!name) return '';
-    return name.split('').reduce((p: string, c: string, i: number) => {
-        if (i === 1) {
-            const cn = isNaN(Number(p));
-            return (cn ? p.toUpperCase() : `T${p}`) + c;
+    return name.split('').filter(i => !filterCharcher.includes(i)).reduce((p: string, c: string, i: number) => {
+        if (!i) {
+            const cn = isNaN(Number(c));
+            return cn ? c.toUpperCase() : `T${c}`;
         }
-        if (p.indexOf('-') !== -1 || p.indexOf('_') !== -1) return p.replace('-', '').replace('_', '') + c.toUpperCase();
+        if (p.indexOf('-') !== -1 || p.indexOf('_') !== -1)
+            return p.replace(/(-|_)/g, '') + c.toUpperCase();
         return p + c;
-    });
+    }, '');
 }
 
 export const clean = () => fse.emptyDirSync(typePath);

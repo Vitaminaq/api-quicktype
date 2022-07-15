@@ -5,3 +5,5 @@ dist
 bin
 types
 yapi-quicktype.config.ts
+out
+test.wsd
