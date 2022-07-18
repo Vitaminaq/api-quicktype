@@ -1,13 +1,21 @@
 import path from 'path';
 import jiti from 'jiti';
-import inquirer from 'inquirer';
+const inquirer = require('inquirer');
 const fse = require('fs-extra');
+
+export let workPath = '';
+
+export const setWorkPath = (p: string) => {
+    workPath = p;
+}
 
 export const cwd = process.cwd();
 
-export const typePath = path.resolve(cwd, './types');
+export const getWorkPath = () => workPath || cwd;
 
-export const getTypeModulePath = (name: string) => path.join(cwd, 'types', `${name}.d.ts`);
+export const typePath = path.resolve(getWorkPath(), './types');
+
+export const getTypeModulePath = (name: string) => path.join(getWorkPath(), 'types', `${name}.d.ts`);
 
 interface Config {
     email: string;
@@ -49,7 +57,7 @@ export const mergeConfig = async () => {
     };
     let userConfig = {};
     try {
-        userConfig = jiti(path.resolve(cwd))('./quicktype.config').default;
+        userConfig = jiti(path.resolve(getWorkPath()))('./quicktype.config').default;
     } catch (e) {
         // userConfig = await inputConfig(config);
     }

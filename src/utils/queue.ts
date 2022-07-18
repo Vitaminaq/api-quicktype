@@ -1,7 +1,7 @@
-import prettier from 'prettier';
+const prettier = require('prettier');
 import chalk from 'chalk';
 import { createTypesFolder, TypeFile } from './utils';
-import cliProgress from 'cli-progress';
+const cliProgress = require('cli-progress');
 
 interface Task {
    run: () => Promise<any>;
