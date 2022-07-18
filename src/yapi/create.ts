@@ -1,7 +1,7 @@
 import { quicktypeJSONSchema, quicktypeJSON } from '../utils/quicktype';
 import { getNamespace } from '../utils/utils';
 import { WriteQueue } from '../utils/queue';
-import chalk from 'chalk';
+// const chalk = require('chalk');
 
 interface Param {
     desc: string;
@@ -28,7 +28,7 @@ export const createParamsInterface = async (params: Param[], path: string) => {
         const { lines } = await quicktypeJSON('typescript', 'Params', JSON.stringify(p));
         return lines.join("\n").replace(/__optional__/g, '?');
     } catch (e) {
-        console.log(chalk.red('[quicktype fail：params]'), path);
+        // console.log(chalk.red('[quicktype fail：params]'), path);
         return '';
     }
 }
@@ -40,7 +40,7 @@ export const createResponseInterface = async (resStr: string, path: string) => {
         const { lines } = await quicktypeJSONSchema('typescript', 'Response', resStr);
         return lines.join("\n");
     } catch (e) {
-        console.log(chalk.red('[quicktype fail：response]'), path);
+        // console.log(chalk.red('[quicktype fail：response]'), path);
         return empty;
     }
 }

@@ -1,7 +1,7 @@
-import prettier from 'prettier';
-import chalk from 'chalk';
+const prettier = require('prettier');
+// const chalk = require('chalk');
 import { createTypesFolder, TypeFile } from './utils';
-import cliProgress from 'cli-progress';
+const cliProgress = require('cli-progress');
 
 interface Task {
    run: () => Promise<any>;
@@ -102,9 +102,9 @@ export class WriteQueue {
          const { filePath } = file;
          try {
             content = prettier.format(file.read() + content, { semi: true, tabWidth: 4, parser: "typescript" });
-            console.log(chalk.green('[success]'), filePath);
+            // console.log(chalk.green('[success]'), filePath);
          } catch (e) {
-            console.log(chalk.yellow('[prettier fail]'), filePath);
+            // console.log(chalk.yellow('[prettier fail]'), filePath);
          }
          file.write(content);
       });

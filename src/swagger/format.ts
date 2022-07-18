@@ -1,5 +1,5 @@
 import { quicktypeJSONSchema } from '../utils/quicktype';
-import chalk from 'chalk';
+// const chalk = require('chalk');
 
 interface Parameter {
     description: string;
@@ -84,7 +84,7 @@ export const parseParamsToInterface = async (parameters: Parameter[], definition
         if (!lines.length) return empty;
         return lines.join("\n");
     } catch(e) {
-        console.log(chalk.red('[quicktype fail：response]'), path);
+        // console.log(chalk.red('[quicktype fail：response]'), path);
         return empty;
     }   
 }
@@ -112,7 +112,7 @@ export const parseResponsesToInterface = async (responses: any, definitions: any
         if (!lines.length) return empty;
         return lines.join("\n");
     } catch(e) {
-        console.log(chalk.red('[quicktype fail：response]'), path);
+        // console.log(chalk.red('[quicktype fail：response]'), path);
         return empty;
     }   
 }

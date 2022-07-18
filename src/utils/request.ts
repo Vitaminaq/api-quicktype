@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
-import chalk from 'chalk';
+// const chalk = require('chalk');
 
 export default class BaseAxios {
 	public axios: AxiosInstance;
@@ -36,12 +36,12 @@ export default class BaseAxios {
 					global.cookie = cookie;
 				}
 				if (definitions) return data;
-				if (errcode !== 0)
-					console.log(chalk.red('[request error]'), errcode, errmsg);
+				// if (errcode !== 0)
+					// console.log(chalk.red('[request error]'), errcode, errmsg);
 				return data.data;
 			},
 			(error) => {
-				console.log(chalk.red('[request error]'), JSON.stringify(error));
+				// console.log(chalk.red('[request error]'), JSON.stringify(error));
 				return null;
 			}
 		);

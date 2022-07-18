@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+// const chalk = require('chalk');
 import Api from '../api/yapi';
 import { create } from './create';
 import { clean, getConfig } from '../utils/utils';
@@ -13,7 +13,7 @@ export const yapi = async () => {
         password
     });
     if (!res) return;
-    console.log(chalk.green('login success!!!'));
+    // console.log(chalk.green('login success!!!'));
 
     const groups = await api.getGroupList();
     if (!groups || !groups.length) return;
