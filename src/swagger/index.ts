@@ -18,6 +18,10 @@ export const swagger = async () => {
     Object.keys(paths).forEach((k: string) => {
         Object.keys(paths[k]).forEach(async (k1) => {
             queue.push(async () => {
+                const { include, exclude } = await getConfig();
+                if (include.length && include.indexOf(k) === -1) return;
+
+                if (exclude.length && exclude.indexOf(k) !== -1) return;
                 const path = `${basePath}${k}.${k1}`;
                 const parameInterface = await parseParamsToInterface(paths[k][k1].parameters, definitions, path);
                 const resInterface = await parseResponsesToInterface(paths[k][k1].responses, definitions, path);

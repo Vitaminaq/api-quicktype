@@ -39,12 +39,12 @@ export const inputConfig = async (config: Partial<Config>) => {
 export const mergeConfig = async () => {
     const config = {
         platform: 'yapi',
-        email: '',
-        password: '',
-        baseURL: '',
-        url: '',
-        limit: 1000,
-        taskLimit: 6,
+        email: '', // yapi
+        password: '', // yapi
+        baseURL: '', // yapi
+        url: '', // swagger
+        limit: 1000, // yapi
+        taskLimit: 6, // yapi
         all: true
     };
     let userConfig = {};
