@@ -1,6 +1,6 @@
 {
 	"name": "api-quicktype",
-	"displayName": "APIQuicktype",
+	"displayName": "API Quicktype",
 	"description": "APIQuicktype: yapi,swagger to .d.ts",
 	"version": "1.0.4",
 	"publisher": "vitaminaq",
@@ -12,20 +12,20 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.APIQuicktype"
+		"onCommand:api.createType"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.APIQuicktype",
+				"command": "api.createType",
 				"title": "APIQuicktype: to .d.ts"
 			}
 		],
 		"keybindings":[
 			{
-				"command": "extension.APIQuicktype",
-				"key": "Ctrl+7"
+				"command": "api.createType",
+				"key": "Ctrl+Shift+7"
 			}
 		]
 	},

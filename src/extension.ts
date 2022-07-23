@@ -3,7 +3,7 @@ import main from './main';
 import { setWorkPath } from './utils/utils';
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable = vscode.commands.registerCommand('extension.APIQuicktype', async () => {
+	let disposable = vscode.commands.registerCommand('api.createType', async () => {
 		const folderUris = await vscode.window.showOpenDialog({
 			canSelectFolders: true,
 			canSelectFiles: false,
