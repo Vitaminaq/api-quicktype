@@ -14,7 +14,7 @@
 	"activationEvents": [
 		"onCommand:api.createType"
 	],
-	"main": "./out/extension.js",
+	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -30,10 +30,9 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint . --ext .ts,.tsx",
-		"watch": "tsc -watch -p ./"
+		"dev": "jiti ./run",
+		"start": "jiti index",
+		"build": "rollup --config rollup.config.js"
 	},
 	"dependencies": {
 		"axios": "^0.24.0",
@@ -46,12 +45,13 @@
 		"typescript": "^4.7.2"
 	},
 	"devDependencies": {
-		"@types/node": "^16.11.7",
-		"@types/readable-stream": "^2.3.14",
-		"@types/urijs": "^1.19.19",
-		"@types/vscode": "^1.34.0",
-		"@typescript-eslint/eslint-plugin": "^5.30.0",
-		"@typescript-eslint/parser": "^5.30.0",
-		"eslint": "^8.13.0"
+		"@babel/core": "^7.18.9",
+		"@babel/preset-env": "^7.18.6",
+		"@rollup/plugin-babel": "^5.3.1",
+		"@rollup/plugin-typescript": "^8.3.3",
+		"@types/node": "^16.11.13",
+		"rollup": "^2.77.0",
+		"rollup-plugin-clear": "^2.0.7",
+		"rollup-plugin-terser": "^7.0.2"
 	}
 }

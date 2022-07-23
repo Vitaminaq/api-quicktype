@@ -1,6 +1,6 @@
 import { getConfig, getNamespace } from '../utils/utils';
 import { api } from '../api/swagger';
-import { parseParamsToInterface, parseResponsesToInterface } from './format';
+import { parseAPIToInterface } from './format';
 import { WriteQueue } from '../utils/queue';
 
 export const fetchData = async () => {
@@ -19,30 +19,27 @@ export const swagger = async () => {
         Object.keys(paths[k]).forEach(async (k1) => {
             queue.push(async () => {
                 const { include, exclude } = await getConfig();
-                if (include.length && include.indexOf(k) === -1) return;
+                if (include && include.length && include.indexOf(k) === -1) return;
 
-                if (exclude.length && exclude.indexOf(k) !== -1) return;
+                if (exclude && exclude.length && exclude.indexOf(k) !== -1) return;
                 const path = `${basePath}${k}.${k1}`;
-                const parameInterface = await parseParamsToInterface(paths[k][k1].parameters, definitions, path);
-                const resInterface = await parseResponsesToInterface(paths[k][k1].responses, definitions, path);
+
+                const current = paths[k][k1];
+
+                const apiInterface = await parseAPIToInterface(current, definitions, path);
 
                 const res = getNamespace(basePath + k, k1);
                 if (!res) return;
                 const { nameSpace } = res;
 
-                console.log(nameSpace);
-
-                const { allPropertiesRequired } = await getConfig();
-
                 const content = `
                 // ${path}
                 declare namespace ${nameSpace} {
-                    ${parameInterface}
-                    ${allPropertiesRequired ? resInterface.replace(/\?/g, '') : resInterface}
+                    ${apiInterface}
                 }`;
 
                 writeQueue.push({
-                    fileName: path.split('/')[2],
+                    fileName: nameSpace.split('.')[1],
                     content
                 });
             });

@@ -1,8 +1,8 @@
 import { yapi } from './yapi';
 import { swagger } from './swagger';
-import { getConfig } from './utils/utils';
+import { getConfig, setWorkPath } from './utils/utils';
 
-export default async (vscode?: any) => {
+const run = async (vscode?: any) => {
     const { platform } = await getConfig();
 
     if (!platform && vscode) {
@@ -18,4 +18,9 @@ export default async (vscode?: any) => {
             break;
     }
     vscode.window.showInformationMessage('ts类型文件生成成功!!!');
+}
+
+export {
+    setWorkPath,
+    run
 }

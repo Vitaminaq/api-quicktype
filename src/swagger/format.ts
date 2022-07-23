@@ -1,5 +1,4 @@
 import { quicktypeJSONSchema } from '../utils/quicktype';
-// const chalk = require('chalk');
 
 interface Parameter {
     description: string;
@@ -14,8 +13,16 @@ interface Parameter {
 
 export const mergeSchema = (sch1: any, sch2: any) => {
     if (!sch2) return sch1;
+    const { properties, required } = sch2;
     Object.assign(sch1.properties, sch2.properties || {});
-    Array.prototype.push.apply(sch1.required, sch2.properties);
+    const set = new Set(sch1.required);
+    if (typeof required === 'boolean' && properties) {
+        Object.keys(properties).forEach(k => set.add(k));
+    }
+    if (Array.isArray(required)) {
+        required.forEach(k => set.add(k));
+    }
+    sch1.required = Array.from(set);
     sch1.type = sch2.type;
     return sch1;
 }
@@ -27,6 +34,31 @@ export const getDefinition = ($ref: any, definitions: any) => {
     return definitions[key];
 }
 
+const deleteKeys = ['xml', 'schema', '$ref', 'headers', 'in'];
+
+export const formatToJSONSchema = (response: any, definitions: any) => {
+    if (typeof response !== 'object') return response;
+    Object.keys(response).forEach(key => {
+        if (key === 'schema') {
+            Object.assign(response, formatToJSONSchema(response[key], definitions));
+            delete response[key];
+        } else if (key === '$ref') {
+            const data = getDefinition(response[key], definitions) || {};
+            delete response[key];
+            Object.assign(response, formatToJSONSchema(data, definitions));
+        } else if (deleteKeys.includes(key)) {
+            delete response[key];
+        } else if (key === 'allOf') {
+            const allOf = response[key];
+            Object.assign(response, formatToJSONSchema(allOf[allOf.length - 1], definitions));
+            delete response[key];
+        } else {
+            response[key] = formatToJSONSchema(response[key], definitions);
+        }
+    });
+    return response;
+}
+
 export const getBodyParamsSchema = (params: Parameter[], definitions: any) => {
     if (!params || !params.length) return;
     const schema: any = {
@@ -35,16 +67,12 @@ export const getBodyParamsSchema = (params: Parameter[], definitions: any) => {
         type: 'object'
     };
     params.forEach(p => {
-        if (!p.schema) return;
-        const { $ref } = p.schema;
-        if (!$ref) return;
-        const current = getDefinition($ref, definitions);
-        mergeSchema(schema, current);
+        mergeSchema(schema, formatToJSONSchema(p, definitions));
     });
     return schema;
 }
 
-export const formatJsonSchema = (params: Parameter[]) => {
+export const formatJsonSchema = (params: Parameter[], definitions: any) => {
     const schema: any = {
         properties: {},
         required: [],
@@ -54,10 +82,7 @@ export const formatJsonSchema = (params: Parameter[]) => {
         if (p.in === 'formData') {
             p.type = 'object';
         }
-        schema.properties[p.name] = {
-            description: p.description,
-            type: p.type
-        };
+        schema.properties[p.name] = formatToJSONSchema(p, definitions);
         p.required && schema.required.push(p.name);
     });
     return schema;
@@ -70,49 +95,42 @@ export const formatParams = (parameters: Parameter[], definitions: any) => {
     const body = target.filter(i => i.in === 'body');
 
     const bodySchema = getBodyParamsSchema(body, definitions);
-    const querySchema = formatJsonSchema(query);
+    const querySchema = formatJsonSchema(query, definitions);
     mergeSchema(querySchema, bodySchema);
     return querySchema;
 }
 
-export const parseParamsToInterface = async (parameters: Parameter[], definitions: any, path: string) => {
-    const empty = 'export type Params = any;';
-    if (!parameters || !parameters.length) return empty;
-    const schema = formatParams(parameters, definitions);
-    try {
-        const { lines } = await quicktypeJSONSchema('typescript', 'Params', JSON.stringify(schema));
-        if (!lines.length) return empty;
-        return lines.join("\n");
-    } catch(e) {
-        // console.log(chalk.red('[quicktype fail：response]'), path);
-        return empty;
-    }   
-}
+const emptyParams = 'export type Params = any;';
+const emptyResponse = 'export type Response = any;';
 
-export const parseResponsesToInterface = async (responses: any, definitions: any, path: string) => {
-    const empty = 'export type Response = any;';
-    if (!responses || !responses[200]) return empty;
-    const { description, schema } = responses[200];
-    let formatSchema;
-    if (!schema.allOf) {
-        formatSchema = getDefinition(schema.$ref, definitions);
-    } else {
-        const { allOf } = schema;
-        const properties = allOf[allOf.length - 1].properties;
-        properties.data = getDefinition(properties.data.$ref, definitions);
-        formatSchema = {
-            description,
-            properties,
-            required: ['data'],
-            type: "object"
+export const parseAPIToInterface = async ({ parameters, responses }: any, definitions: any, path: string) => {
+    const paramsJsonSchema = await formatParams(parameters, definitions);
+    const responseJsonSchema = await formatToJSONSchema(responses && responses[200], definitions);
+
+    const empty = `${emptyParams} ${emptyResponse}`;
+
+    const apiJsonSchema = {
+        type: 'object',
+        required: ['params', 'reponse'],
+        properties: {
+            params: paramsJsonSchema,
+            reponse: responseJsonSchema
         }
     }
+
     try {
-        const { lines } = await quicktypeJSONSchema('typescript', 'Response', JSON.stringify(formatSchema));
+        const { lines } = await quicktypeJSONSchema('typescript', 'APIContent', JSON.stringify(apiJsonSchema));
         if (!lines.length) return empty;
-        return lines.join("\n");
+        let res = lines.join("\n");
+        if (!paramsJsonSchema) {
+            res = emptyParams + res;
+        }
+        if (!responseJsonSchema) {
+            res = res + emptyResponse;
+        }
+        return res;
     } catch(e) {
-        // console.log(chalk.red('[quicktype fail：response]'), path);
+        // console.log(chalk.red('[quicktype fail：]'), path, e);
         return empty;
     }   
 }

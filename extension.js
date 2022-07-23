@@ -1,8 +1,7 @@
-import * as vscode from 'vscode';
-import main from './main';
-import { setWorkPath } from './utils/utils';
+const vscode = require('vscode');
+const { run, setWorkPath } = require('./dist/quicktype.cjs');
 
-export function activate(context: vscode.ExtensionContext) {
+function activate(context) {
 	let disposable = vscode.commands.registerCommand('api.createType', async () => {
 		const folderUris = await vscode.window.showOpenDialog({
 			canSelectFolders: true,
@@ -15,7 +14,9 @@ export function activate(context: vscode.ExtensionContext) {
 			return null;
 		}
 		setWorkPath(folderUris[0].path.replace('/', ''));
-		main(vscode);
+		run(vscode);
 	});
 	context.subscriptions.push(disposable);
 }
+
+exports.activate = activate;

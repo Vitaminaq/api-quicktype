@@ -1,25 +1,40 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2020",
-    "lib": ["es2020", "DOM"],
-    "outDir": "out",
-    "sourceMap": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
     "strict": true,
-    "rootDir": "src",
-    "types": ["@types/node"],
+    "importHelpers": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
-	"allowJs": true
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
+  "include": [
+    "index.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
   "exclude": [
-	"out",
-    "node_modules/*",
-    ".vscode-test",
-    "src/api",
-    "src/swagger",
-    "src/utils",
-    "src/yapi",
-    "src/index.ts",
-    "src/main.ts"
+    "node_modules",
+    "extension"
   ]
 }
