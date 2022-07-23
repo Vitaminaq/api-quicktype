@@ -104,7 +104,7 @@ export class WriteQueue {
             content = prettier.format(file.read() + content, { semi: true, tabWidth: 4, parser: "typescript" });
             console.log(chalk.green('[success]'), filePath);
          } catch (e) {
-            console.log(chalk.yellow('[prettier fail]'), filePath);
+            console.log(chalk.yellow('[prettier fail]'), e, filePath);
          }
          file.write(content);
       });
