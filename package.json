@@ -5,7 +5,8 @@
   "bin": {
     "yapi-quicktype": "bin/yapi-quicktype.js"
   },
-  "main": "index.ts",
+  "main": "dist/quicktype.cjs",
+  "module": "dist/quicktype.mjs",
   "scripts": {
     "dev": "jiti ./run",
 	"start": "jiti index",
