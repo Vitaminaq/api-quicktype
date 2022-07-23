@@ -1,2 +1,6 @@
 yarn.lock
 src
+rollup.config.js
+tsconfig.json
+types
+node_modules
