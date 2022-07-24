@@ -111,10 +111,10 @@ export const parseAPIToInterface = async ({ parameters, responses }: any, defini
 
     const apiJsonSchema = {
         type: 'object',
-        required: ['params', 'reponse'],
+        required: ['params', 'response'],
         properties: {
             params: paramsJsonSchema,
-            reponse: responseJsonSchema
+            response: responseJsonSchema
         }
     }
 

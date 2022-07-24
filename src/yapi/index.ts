@@ -1,7 +1,7 @@
-// const chalk = require('chalk');
 import Api from '../api/yapi';
 import { create } from './create';
-import { clean, getConfig } from '../utils/utils';
+// import { clean } from '../utils/utils';
+import { getConfig } from '../utils/config';
 import { RequestQueue, WriteQueue } from '../utils/queue';
 
 export const yapi = async () => {
@@ -17,7 +17,7 @@ export const yapi = async () => {
 
     const groups = await api.getGroupList();
     if (!groups || !groups.length) return;
-    clean();
+    // clean();
 
     const writeQueue = new WriteQueue();
     const requestQueue = new RequestQueue(writeQueue, taskLimit);

@@ -1,7 +1,5 @@
-const prettier = require('prettier');
-// const chalk = require('chalk');
 import { createTypesFolder, TypeFile } from './utils';
-const cliProgress = require('cli-progress');
+const prettier = require('prettier');
 
 interface Task {
    run: () => Promise<any>;
@@ -24,11 +22,6 @@ export class RequestQueue {
          this.taskLimit = limit;
       }
       this.writeQueue = writeQueue;
-      this.progress = new cliProgress.SingleBar(
-         {}, 
-         cliProgress.Presets.shades_classic
-      );
-      this.progress.start(0, 0);
    }
 
    public get taskQueueLen() {

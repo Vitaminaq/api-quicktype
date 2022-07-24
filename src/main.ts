@@ -1,9 +1,14 @@
 import { yapi } from './yapi';
 import { swagger } from './swagger';
-import { getConfig, setWorkPath } from './utils/utils';
+import { getConfig, setWorkPath, setVscode } from './utils/config';
 
-const run = async (vscode?: any) => {
+export default async (path: string, vscode?: any) => {
+    setWorkPath(path);
+    setVscode(vscode);
+
     const { platform } = await getConfig();
+
+    vscode.window.showErrorMessage(platform);
 
     if (!platform && vscode) {
         vscode.window.showErrorMessage('请当前目录下配置quicktype.config');
@@ -18,9 +23,4 @@ const run = async (vscode?: any) => {
             break;
     }
     vscode.window.showInformationMessage('ts类型文件生成成功!!!');
-}
-
-export {
-    setWorkPath,
-    run
 }

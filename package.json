@@ -2,7 +2,7 @@
 	"name": "api-quicktype",
 	"displayName": "API Quicktype",
 	"description": "APIQuicktype: yapi,swagger to .d.ts",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"publisher": "vitaminaq",
 	"repository": "https://github.com/Vitaminaq/yapi-quicktype",
 	"engines": {
@@ -14,7 +14,7 @@
 	"activationEvents": [
 		"onCommand:api.createType"
 	],
-	"main": "./extension.js",
+	"main": "./dist/quicktype.js",
 	"contributes": {
 		"commands": [
 			{
@@ -22,7 +22,7 @@
 				"title": "APIQuicktype: to .d.ts"
 			}
 		],
-		"keybindings":[
+		"keybindings": [
 			{
 				"command": "api.createType",
 				"key": "Ctrl+Shift+7"
@@ -32,7 +32,10 @@
 	"scripts": {
 		"dev": "jiti ./run",
 		"start": "jiti index",
-		"build": "rollup --config rollup.config.js"
+		"build": "rollup --config rollup.config.js",
+		"vscode:prepublish": "npm run compile",
+		"compile": "build.sh",
+		"watch": "rollup --config rollup.config.js --watch"
 	},
 	"dependencies": {
 		"axios": "^0.24.0",
@@ -48,6 +51,9 @@
 		"@babel/core": "^7.18.9",
 		"@babel/preset-env": "^7.18.6",
 		"@rollup/plugin-babel": "^5.3.1",
+		"@rollup/plugin-commonjs": "^22.0.1",
+		"@rollup/plugin-json": "^4.1.0",
+		"@rollup/plugin-node-resolve": "^13.3.0",
 		"@rollup/plugin-typescript": "^8.3.3",
 		"@types/node": "^16.11.13",
 		"rollup": "^2.77.0",

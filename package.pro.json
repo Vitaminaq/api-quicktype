@@ -1,0 +1,13 @@
+{
+	"name": "api-quicktype",
+	"displayName": "API Quicktype",
+	"description": "APIQuicktype: yapi,swagger to .d.ts",
+	"version": "1.0.5",
+	"publisher": "vitaminaq",
+	"repository": "https://github.com/Vitaminaq/yapi-quicktype",
+	"dependencies": {
+		"fs-extra": "^10.0.0",
+		"jiti": "^1.12.9",
+		"prettier": "^2.5.1"
+	}
+}

@@ -4,3 +4,9 @@ rollup.config.js
 tsconfig.json
 types
 node_modules
+package-lock.json
+dist/package-lock.json
+dist/package.json
+build.sh
+package.pro.json
+.gitignore

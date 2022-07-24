@@ -1,102 +1,16 @@
+import { doCamel } from './filter';
+import { workPath } from './config';
 const path = require('path');
-const jiti = require('jiti');
-const inquirer = require('inquirer');
 const fse = require('fs-extra');
-
-export let workPath = '';
-
-export const setWorkPath = (p: string) => {
-    workPath = p;
-}
-
-export const cwd = process.cwd();
-
-export const defaultWorkPath = workPath || cwd;
 
 export const typePath = path.resolve(workPath, './types');
 
 export const getTypeModulePath = (name: string) => path.join(workPath, 'types', `${name}.d.ts`);
 
-interface Config {
-    email: string;
-    password: string;
-    baseURL: string;
-    limit: number;
-    taskLimit: number;
-    all: boolean;
-}
-const requiredField: (keyof Config)[] = ['email', 'password', 'baseURL'];
-
-export const inputConfig = async (config: Partial<Config>) => {
-    const list: any[] = [];
-
-    requiredField.forEach(k => {
-        if (!config || !config[k]) {
-            list.push({
-                type: 'input',
-                message: `yapi ${k}：`,
-                name: k,
-                filter: (res: string) => res.trim()
-            });
-        }
-    });
-    if (!list.length) return;
-    return inquirer.prompt(list);
-}
-
-export const mergeConfig = async () => {
-    const config = {
-        platform: 'yapi',
-        email: '', // yapi
-        password: '', // yapi
-        baseURL: '', // yapi
-        url: '', // swagger
-        limit: 1000, // yapi
-        taskLimit: 6, // yapi
-        all: true
-    };
-    let userConfig = {};
-    try {
-        userConfig = jiti(path.resolve(workPath))('./quicktype.config').default;
-    } catch (e) {
-        // userConfig = await inputConfig(config);
-    }
-    Object.assign(config, userConfig);
-    // Object.assign(config, await inputConfig(config));
-    return config;
-};
-
-
-export const createConfig = () => {
-    let config: any;
-    return async () => {
-        if (config) return config;
-        config = await mergeConfig();
-        return config;
-    }
-}
-
-export const getConfig = createConfig();
-
 export const getNames = (path: string) => {
     const n = path.split('?')[0].replace('//', '').split('/');
     n.shift();
     return n.map((m: string) => m.replace(/(\{|\})/g, ''));
-}
-
-const filterCharcher = [';', ':', '?', '{', '}', '[', ']'];
-
-export const doCamel = (name: string) => {
-    if (!name) return '';
-    return name.split('').filter(i => !filterCharcher.includes(i)).reduce((p: string, c: string, i: number) => {
-        if (!i) {
-            const cn = isNaN(Number(c));
-            return cn ? c.toUpperCase() : `T${c}`;
-        }
-        if (p.indexOf('-') !== -1 || p.indexOf('_') !== -1)
-            return p.replace(/(-|_)/g, '') + c.toUpperCase();
-        return p + c;
-    }, '');
 }
 
 export const clean = () => fse.emptyDirSync(typePath);

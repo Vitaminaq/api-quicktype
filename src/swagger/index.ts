@@ -1,4 +1,5 @@
-import { getConfig, getNamespace } from '../utils/utils';
+import { getConfig } from '../utils/config';
+import { getNamespace } from '../utils/utils';
 import { api } from '../api/swagger';
 import { parseAPIToInterface } from './format';
 import { WriteQueue } from '../utils/queue';

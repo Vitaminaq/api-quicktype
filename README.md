@@ -32,5 +32,5 @@ enter 'APIQuicktype'
 
 or  
 ```
-ctrl + 7
+ctrl + shift + 7
 ```
