@@ -8,8 +8,6 @@ export default async (path: string, vscode?: any) => {
 
     const { platform } = await getConfig();
 
-    vscode.window.showErrorMessage(platform);
-
     if (!platform && vscode) {
         vscode.window.showErrorMessage('请当前目录下配置quicktype.config');
     }

@@ -2,7 +2,7 @@
 	"name": "api-quicktype",
 	"displayName": "API Quicktype",
 	"description": "APIQuicktype: yapi,swagger to .d.ts",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"publisher": "vitaminaq",
 	"repository": "https://github.com/Vitaminaq/yapi-quicktype",
 	"engines": {
@@ -11,6 +11,7 @@
 	"categories": [
 		"Other"
 	],
+	"icon": "images/icon.png",
 	"activationEvents": [
 		"onCommand:api.createType"
 	],
